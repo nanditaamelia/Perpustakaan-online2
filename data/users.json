@@ -2,7 +2,7 @@
   {
     "id": "1",
     "email": "admin@library.com",
-    "password": "$2a$10$rOH6bFJhKZF7J6JHZ6wSH.Q6W0XH5lK5JZF7J6JHZ6wSH.Q6W0XHYu",
+    "password": "$2a$10$tkPIjf1Yf9EM2GGQRUzDEOV85CYhmpPOHgJqdBgcZuIiwI45vsBzG",
     "nama": "Admin Perpustakaan",
     "role": "admin",
     "noAnggota": "ADM-001",
@@ -14,7 +14,7 @@
   {
     "id": "2",
     "email": "member@test.com",
-    "password": "$2a$10$rOH6bFJhKZF7J6JHZ6wSH.Q6W0XH5lK5JZF7J6JHZ6wSH.Q6W0XHYu",
+    "password": "$2a$10$qdS1hH9MWAYQSLseCwUpFuFNLhMXxu7sVzaMKjJA16JNmDfngJhR.",
     "nama": "John Doe",
     "role": "member",
     "noAnggota": "MBR-20250101-001",
@@ -26,7 +26,7 @@
   {
     "id": "3",
     "email": "member2@test.com",
-    "password": "$2a$10$rOH6bFJhKZF7J6JHZ6wSH.Q6W0XH5lK5JZF7J6JHZ6wSH.Q6W0XHYu",
+    "password": "$2a$10$qdS1hH9MWAYQSLseCwUpFuFNLhMXxu7sVzaMKjJA16JNmDfngJhR.",
     "nama": "Jane Smith",
     "role": "member",
     "noAnggota": "MBR-20250101-002",

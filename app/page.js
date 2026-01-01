@@ -60,7 +60,7 @@ export default function HomePage() {
                 </Button>
               </Link>
               <Link href="/register">
-                <Button size="lg" variant="outline" className="bg-white/10 border-white hover:bg-white/20">
+                <Button size="lg" variant="outline" className="bg-white/10 border-white hover:bg-white/20 text-white hover:text-white">
                   Daftar Sekarang
                 </Button>
               </Link>
