@@ -1,0 +1,38 @@
+[
+  {
+    "id": "1",
+    "email": "admin@library.com",
+    "password": "$2a$10$tkPIjf1Yf9EM2GGQRUzDEOV85CYhmpPOHgJqdBgcZuIiwI45vsBzG",
+    "nama": "Admin Perpustakaan",
+    "role": "admin",
+    "noAnggota": "ADM-001",
+    "telepon": "081234567890",
+    "alamat": "Jl. Admin No. 1, Jakarta Pusat",
+    "fotoUrl": null,
+    "createdAt": "2025-01-01T00:00:00.000Z"
+  },
+  {
+    "id": "2",
+    "email": "member@test.com",
+    "password": "$2a$10$qdS1hH9MWAYQSLseCwUpFuFNLhMXxu7sVzaMKjJA16JNmDfngJhR.",
+    "nama": "John Doe",
+    "role": "member",
+    "noAnggota": "MBR-20250101-001",
+    "telepon": "081234567891",
+    "alamat": "Jl. Sudirman No. 10, Jakarta Selatan",
+    "fotoUrl": null,
+    "createdAt": "2025-01-01T00:00:00.000Z"
+  },
+  {
+    "id": "3",
+    "email": "member2@test.com",
+    "password": "$2a$10$qdS1hH9MWAYQSLseCwUpFuFNLhMXxu7sVzaMKjJA16JNmDfngJhR.",
+    "nama": "Jane Smith",
+    "role": "member",
+    "noAnggota": "MBR-20250101-002",
+    "telepon": "081234567892",
+    "alamat": "Jl. Thamrin No. 25, Jakarta Pusat",
+    "fotoUrl": null,
+    "createdAt": "2025-01-01T00:00:00.000Z"
+  }
+]

@@ -1,0 +1,122 @@
+[
+  {
+    "id": "1",
+    "userId": "2",
+    "bookId": "1",
+    "tanggalPinjam": "2024-12-25T00:00:00.000Z",
+    "tanggalHarusKembali": "2025-01-01T23:59:59.000Z",
+    "tanggalKembali": null,
+    "status": "approved",
+    "diperpanjang": false,
+    "denda": 0,
+    "createdAt": "2024-12-25T00:00:00.000Z"
+  },
+  {
+    "id": "2",
+    "userId": "3",
+    "bookId": "2",
+    "tanggalPinjam": "2024-12-28T00:00:00.000Z",
+    "tanggalHarusKembali": null,
+    "tanggalKembali": null,
+    "status": "pending",
+    "diperpanjang": false,
+    "denda": 0,
+    "createdAt": "2024-12-28T00:00:00.000Z"
+  },
+  {
+    "id": "3",
+    "userId": "2",
+    "bookId": "3",
+    "tanggalPinjam": "2024-12-15T00:00:00.000Z",
+    "tanggalHarusKembali": "2024-12-22T23:59:59.000Z",
+    "tanggalKembali": "2024-12-30T00:00:00.000Z",
+    "status": "returned",
+    "diperpanjang": false,
+    "denda": 8000,
+    "createdAt": "2024-12-15T00:00:00.000Z"
+  },
+  {
+    "id": "4",
+    "userId": "3",
+    "bookId": "4",
+    "tanggalPinjam": "2024-12-20T00:00:00.000Z",
+    "tanggalHarusKembali": "2024-12-27T23:59:59.000Z",
+    "tanggalKembali": "2024-12-26T00:00:00.000Z",
+    "status": "returned",
+    "diperpanjang": false,
+    "denda": 0,
+    "createdAt": "2024-12-20T00:00:00.000Z"
+  },
+  {
+    "id": "5",
+    "userId": "2",
+    "bookId": "8",
+    "tanggalPinjam": "2024-12-26T00:00:00.000Z",
+    "tanggalHarusKembali": "2025-01-02T23:59:59.000Z",
+    "tanggalKembali": null,
+    "status": "approved",
+    "diperpanjang": false,
+    "denda": 0,
+    "createdAt": "2024-12-26T00:00:00.000Z"
+  },
+  {
+    "id": "6",
+    "userId": "3",
+    "bookId": "6",
+    "tanggalPinjam": "2024-12-29T00:00:00.000Z",
+    "tanggalHarusKembali": null,
+    "tanggalKembali": null,
+    "status": "pending",
+    "diperpanjang": false,
+    "denda": 0,
+    "createdAt": "2024-12-29T00:00:00.000Z"
+  },
+  {
+    "id": "7",
+    "userId": "2",
+    "bookId": "5",
+    "tanggalPinjam": "2024-12-10T00:00:00.000Z",
+    "tanggalHarusKembali": "2024-12-17T23:59:59.000Z",
+    "tanggalKembali": null,
+    "status": "rejected",
+    "diperpanjang": false,
+    "denda": 0,
+    "createdAt": "2024-12-10T00:00:00.000Z"
+  },
+  {
+    "id": "8",
+    "userId": "3",
+    "bookId": "7",
+    "tanggalPinjam": "2024-12-18T00:00:00.000Z",
+    "tanggalHarusKembali": "2024-12-25T23:59:59.000Z",
+    "tanggalKembali": "2024-12-24T00:00:00.000Z",
+    "status": "returned",
+    "diperpanjang": false,
+    "denda": 0,
+    "createdAt": "2024-12-18T00:00:00.000Z"
+  },
+  {
+    "id": "9",
+    "userId": "2",
+    "bookId": "10",
+    "tanggalPinjam": "2024-12-05T00:00:00.000Z",
+    "tanggalHarusKembali": "2024-12-19T23:59:59.000Z",
+    "tanggalKembali": "2024-12-28T00:00:00.000Z",
+    "status": "returned",
+    "diperpanjang": true,
+    "denda": 9000,
+    "createdAt": "2024-12-05T00:00:00.000Z"
+  },
+  {
+    "id": "10",
+    "userId": "3",
+    "bookId": "9",
+    "tanggalPinjam": "2024-12-12T00:00:00.000Z",
+    "tanggalHarusKembali": "2024-12-19T23:59:59.000Z",
+    "tanggalKembali": "2024-12-19T00:00:00.000Z",
+    "status": "returned",
+    "diperpanjang": false,
+    "denda": 0,
+    "createdAt": "2024-12-12T00:00:00.000Z"
+  }
+]
