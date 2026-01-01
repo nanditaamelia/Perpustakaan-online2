@@ -1,71 +1,71 @@
 import { NextResponse } from 'next/server';
-import { writeFile, mkdir } from 'fs/promises';
-import { existsSync } from 'fs';
-import path from 'path';
+import { uploadImage, validateImage, isCloudinaryEnabled } from '@/lib/cloudinary';
+import { withErrorHandling, ValidationError, ApiError } from '@/lib/errorHandler';
+import { rateLimitMiddleware } from '@/lib/rateLimit';
+import { logInfo } from '@/lib/logger';
 
 /**
  * POST /api/upload
- * Upload file to public/uploads
+ * Upload file to Cloudinary or local storage
+ * Supports rate limiting, validation, and error handling
  */
-export async function POST(request) {
+async function handler(request) {
+  const formData = await request.formData();
+  const file = formData.get('file');
+  const type = formData.get('type') || 'books';
+
+  if (!file) {
+    throw new ValidationError('No file uploaded');
+  }
+
+  const maxSize = parseInt(process.env.MAX_FILE_SIZE || '5242880', 10);
+  const validation = validateImage(
+    {
+      type: file.type,
+      size: file.size,
+    },
+    maxSize
+  );
+
+  if (!validation.valid) {
+    throw new ValidationError(validation.error);
+  }
+
+  const bytes = await file.arrayBuffer();
+  const buffer = Buffer.from(bytes);
+
+  const originalName = file.name.replace(/[^a-zA-Z0-9.-]/g, '_');
+  const filename = `${Date.now()}-${originalName}`;
+
   try {
-    const formData = await request.formData();
-    const file = formData.get('file');
-    const type = formData.get('type') || 'books'; // books or users
+    const result = await uploadImage(buffer, filename, type);
 
-    if (!file) {
-      return NextResponse.json(
-        { error: 'No file uploaded' },
-        { status: 400 }
-      );
-    }
-
-    // Validate file type
-    if (!file.type.startsWith('image/')) {
-      return NextResponse.json(
-        { error: 'File harus berupa gambar' },
-        { status: 400 }
-      );
-    }
-
-    // Validate file size (max 5MB)
-    if (file.size > 5 * 1024 * 1024) {
-      return NextResponse.json(
-        { error: 'Ukuran file maksimal 5MB' },
-        { status: 400 }
-      );
-    }
-
-    // Generate unique filename
-    const bytes = await file.arrayBuffer();
-    const buffer = Buffer.from(bytes);
-
-    const timestamp = Date.now();
-    const originalName = file.name.replace(/[^a-zA-Z0-9.-]/g, '_');
-    const filename = `${timestamp}-${originalName}`;
-
-    // Create upload directory if not exists
-    const uploadDir = path.join(process.cwd(), 'public', 'uploads', type);
-    if (!existsSync(uploadDir)) {
-      await mkdir(uploadDir, { recursive: true });
-    }
-
-    // Save file
-    const filepath = path.join(uploadDir, filename);
-    await writeFile(filepath, buffer);
-
-    // Return public URL
-    const publicUrl = `/uploads/${type}/${filename}`;
+    logInfo('File uploaded successfully', {
+      filename,
+      type,
+      size: file.size,
+      cloudinary: isCloudinaryEnabled(),
+    });
 
     return NextResponse.json({
+      success: true,
       message: 'File uploaded successfully',
-      url: publicUrl,
+      url: result.url,
+      publicId: result.publicId,
+      format: result.format,
+      cloudinary: isCloudinaryEnabled(),
     });
   } catch (error) {
-    console.error('Upload error:', error);
-    return NextResponse.json(
-      { error: 'Terjadi kesalahan saat upload file' },
-      { status: 500 }
-    );
+    throw new ApiError('Failed to upload file', 500, error.message);
   }
+}
+
+export async function POST(request) {
+  return rateLimitMiddleware(withErrorHandling(handler))(request, {
+    json: (data) => NextResponse.json(data, { status: data.success ? 200 : data.statusCode || 500 }),
+    status: (code) => ({
+      json: (data) => NextResponse.json(data, { status: code }),
+    }),
+    setHeader: () => {},
+  });
 }

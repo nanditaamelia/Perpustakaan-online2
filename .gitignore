@@ -24,9 +24,14 @@ yarn-error.log*
 
 # Local env files
 .env*.local
+.env
 
 # Vercel
 .vercel
+
+# Logs
+/logs
+*.log
 
 # Optional: Uncomment to ignore uploads (for production)
 # /public/uploads

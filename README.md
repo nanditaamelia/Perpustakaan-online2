@@ -34,17 +34,37 @@ Aplikasi web modern untuk manajemen perpustakaan dengan fitur peminjaman buku, m
 - ✅ Toast notifications
 - ✅ Loading states & empty states
 
+### 🔒 Production-Ready Features
+- ✅ **Rate Limiting**: API protection (100 requests per 15 minutes)
+- ✅ **Logging System**: Winston logger with file rotation
+- ✅ **Cloud Storage**: Cloudinary integration (with local fallback)
+- ✅ **Error Handling**: Comprehensive error handling & validation
+- ✅ **Security**: Environment variables, session secrets, JWT tokens
+- ✅ **Testing**: Jest + React Testing Library
+- ✅ **Code Quality**: ESLint, proper code structure
+
 ## 🚀 Tech Stack
 
+### Core
 - **Frontend**: Next.js 14 (App Router)
 - **Styling**: Tailwind CSS
-- **Database**: JSON files (no setup needed!)
-- **Authentication**: Session-based with cookies
+- **Database**: JSON files (easy migration to SQL)
+- **Authentication**: Session-based with secure cookies
 - **Icons**: Lucide React
 - **Notifications**: React Hot Toast
 - **Password Hashing**: bcryptjs
 
+### Production Features
+- **Cloud Storage**: Cloudinary (with local fallback)
+- **Logging**: Winston (file-based logging)
+- **Rate Limiting**: Custom in-memory rate limiter
+- **Security**: Crypto-js, environment variables
+- **Testing**: Jest, React Testing Library
+- **Error Handling**: Custom error classes & middleware
+
 ## 📦 Installation
+
+### Quick Start (Development)
 
 1. **Clone repository:**
 ```bash
@@ -57,17 +77,49 @@ cd Perpustakaan-online
 npm install
 ```
 
-3. **Run development server:**
+3. **Environment setup:**
+The `.env` file is already created with secure defaults. You can use it as-is for development.
+
+For **Cloudinary** (optional):
+- Sign up at [cloudinary.com](https://cloudinary.com)
+- Get your credentials from the dashboard
+- Update these values in `.env`:
+  ```env
+  CLOUDINARY_CLOUD_NAME=your-cloud-name
+  CLOUDINARY_API_KEY=your-api-key
+  CLOUDINARY_API_SECRET=your-api-secret
+  ```
+
+4. **Run development server:**
 ```bash
 npm run dev
 ```
 
-4. **Open browser:**
+5. **Open browser:**
 ```
 http://localhost:3000
 ```
 
-**That's it! No database setup needed!**
+### Additional Commands
+
+```bash
+# Run tests
+npm test
+
+# Run tests with coverage
+npm run test:coverage
+
+# Run tests in watch mode
+npm test:watch
+
+# Build for production
+npm run build
+
+# Start production server
+npm start
+```
+
+**No database setup needed!** The app uses JSON files for storage.
 
 ## 🔑 Demo Credentials
 
@@ -220,12 +272,29 @@ perpustakaan-online/
 
 ### Environment Variables
 
-Tidak ada environment variables yang required. Aplikasi langsung jalan dengan JSON files.
+The `.env` file is pre-configured with secure defaults. For production, update these:
 
-Optional untuk production:
+**Required for Production:**
 ```env
 NODE_ENV=production
 NEXT_PUBLIC_API_URL=https://your-domain.com
+SESSION_SECRET=<generate-with-openssl-rand-base64-32>
+JWT_SECRET=<generate-with-openssl-rand-base64-32>
+```
+
+**Optional (Cloudinary):**
+```env
+CLOUDINARY_CLOUD_NAME=your-cloud-name
+CLOUDINARY_API_KEY=your-api-key
+CLOUDINARY_API_SECRET=your-api-secret
+```
+
+**Configurable:**
+```env
+RATE_LIMIT_MAX=100              # Max requests per window
+RATE_LIMIT_WINDOW=900000        # 15 minutes in ms
+LOG_LEVEL=info                  # error, warn, info, debug
+MAX_FILE_SIZE=5242880          # 5MB in bytes
 ```
 
 ## 📝 API Endpoints
@@ -264,6 +333,142 @@ NEXT_PUBLIC_API_URL=https://your-domain.com
 
 ### Statistics
 - `GET /api/stats` - Get dashboard statistics (Admin)
+
+### Upload
+- `POST /api/upload` - Upload image to Cloudinary or local storage
+
+## 🔒 Production Features
+
+### Rate Limiting
+
+All API routes are protected with rate limiting:
+- **100 requests per 15 minutes** per IP address
+- Automatic cleanup of old entries
+- Returns `429 Too Many Requests` when limit exceeded
+- Response headers include:
+  - `X-RateLimit-Limit`: Maximum requests allowed
+  - `X-RateLimit-Remaining`: Remaining requests
+  - `X-RateLimit-Reset`: When the limit resets
+  - `Retry-After`: Seconds to wait before retry
+
+Configure in `.env`:
+```env
+RATE_LIMIT_MAX=100
+RATE_LIMIT_WINDOW=900000
+```
+
+### Logging System
+
+Winston-based logging with file rotation:
+- **Error logs**: `logs/error.log` (errors only)
+- **Combined logs**: `logs/combined.log` (all logs)
+- **Console logs**: Development only
+- **Max file size**: 5MB with 5 file rotation
+- **Log levels**: error, warn, info, debug
+
+Features logged:
+- All API requests (method, URL, status, duration, IP)
+- Failed login attempts
+- File uploads
+- Errors with stack traces
+
+Configure in `.env`:
+```env
+LOG_LEVEL=info
+LOG_DIR=logs
+```
+
+### Cloud Storage (Cloudinary)
+
+Smart file upload with Cloudinary integration:
+- **Primary**: Cloudinary (when configured)
+- **Fallback**: Local storage (`public/uploads/`)
+- **Auto-optimization**: Image transformation, quality, format
+- **Validation**: File type, size limits
+- **Max size**: 5MB (configurable)
+
+Setup Cloudinary:
+1. Sign up at [cloudinary.com](https://cloudinary.com)
+2. Add credentials to `.env`:
+```env
+CLOUDINARY_CLOUD_NAME=your-cloud-name
+CLOUDINARY_API_KEY=your-api-key
+CLOUDINARY_API_SECRET=your-api-secret
+```
+
+Features:
+- Automatic image optimization
+- Responsive image delivery
+- CDN distribution
+- Secure deletion
+
+### Error Handling
+
+Comprehensive error handling system:
+
+**Custom Error Classes:**
+- `ValidationError` (400): Invalid input
+- `UnauthorizedError` (401): Authentication failed
+- `ForbiddenError` (403): No permission
+- `NotFoundError` (404): Resource not found
+- `ConflictError` (409): Resource conflict
+- `ApiError` (500): Server error
+
+**Features:**
+- Automatic error logging
+- Consistent error responses
+- Stack traces in development
+- Validation helpers (`validateRequired`, `validateEmail`, `validateLength`)
+
+**Usage in API routes:**
+```javascript
+import { apiRoute } from '@/lib/apiHandler';
+import { ValidationError } from '@/lib/errorHandler';
+
+export const POST = apiRoute(async (req) => {
+  if (!email) throw new ValidationError('Email is required');
+  // Your code here
+});
+```
+
+### Security
+
+Production-ready security features:
+- **Session secrets**: Secure session signing
+- **JWT tokens**: Token-based authentication
+- **Password hashing**: bcrypt with 10 rounds
+- **Environment variables**: Sensitive data protection
+- **httpOnly cookies**: XSS protection
+- **CORS ready**: Cross-origin configuration
+
+**Generate secrets:**
+```bash
+openssl rand -base64 32
+```
+
+### Testing
+
+Jest + React Testing Library setup:
+
+```bash
+# Run all tests
+npm test
+
+# Watch mode
+npm test:watch
+
+# Coverage report
+npm run test:coverage
+```
+
+**Test coverage:**
+- Utility functions
+- Error handling
+- Validation functions
+- API routes (add your own)
+- Components (add your own)
+
+**Coverage threshold**: 50% (configurable in `jest.config.js`)
 
 ## 🎨 Customization
 
