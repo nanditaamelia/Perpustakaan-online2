@@ -24,6 +24,7 @@ export default function BookForm({ book, categories, onSubmit, onCancel, loading
 
   const [errors, setErrors] = useState({});
   const [coverPreview, setCoverPreview] = useState(null);
+  const [uploading, setUploading] = useState(false);
 
   useEffect(() => {
     if (book) {
@@ -56,7 +57,7 @@ export default function BookForm({ book, categories, onSubmit, onCancel, loading
     }
   };
 
-  const handleFileChange = (e) => {
+  const handleFileChange = async (e) => {
     const file = e.target.files?.[0];
     if (file) {
       // Validate file type
@@ -78,15 +79,38 @@ export default function BookForm({ book, categories, onSubmit, onCancel, loading
       };
       reader.readAsDataURL(file);
 
-      // For now, we'll use a placeholder URL
-      // In production, you'd upload to a server and get the URL
-      const fileName = file.name;
-      setFormData((prev) => ({
-        ...prev,
-        coverUrl: `/uploads/books/${Date.now()}-${fileName}`,
-      }));
+      // Upload file to server
+      try {
+        setUploading(true);
+        const uploadFormData = new FormData();
+        uploadFormData.append('file', file);
+        uploadFormData.append('type', 'books');
 
-      setErrors((prev) => ({ ...prev, cover: '' }));
+        const response = await fetch('/api/upload', {
+          method: 'POST',
+          body: uploadFormData,
+        });
+
+        const data = await response.json();
+
+        if (!response.ok) {
+          setErrors((prev) => ({ ...prev, cover: data.error || 'Upload gagal' }));
+          return;
+        }
+
+        // Set the uploaded file URL
+        setFormData((prev) => ({
+          ...prev,
+          coverUrl: data.url,
+        }));
+
+        setErrors((prev) => ({ ...prev, cover: '' }));
+      } catch (error) {
+        console.error('Upload error:', error);
+        setErrors((prev) => ({ ...prev, cover: 'Gagal upload file' }));
+      } finally {
+        setUploading(false);
+      }
     }
   };
 
@@ -169,15 +193,27 @@ export default function BookForm({ book, categories, onSubmit, onCancel, loading
           </div>
         ) : (
           <label className="flex flex-col items-center justify-center w-full h-48 border-2 border-dashed border-gray-300 dark:border-gray-600 rounded-lg cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors">
-            <Upload className="w-10 h-10 text-gray-400 mb-2" />
-            <span className="text-sm text-gray-500 dark:text-gray-400">
-              Klik untuk upload cover
-            </span>
+            {uploading ? (
+              <>
+                <div className="w-10 h-10 border-4 border-blue-500 border-t-transparent rounded-full animate-spin mb-2"></div>
+                <span className="text-sm text-blue-500 dark:text-blue-400">
+                  Uploading...
+                </span>
+              </>
+            ) : (
+              <>
+                <Upload className="w-10 h-10 text-gray-400 mb-2" />
+                <span className="text-sm text-gray-500 dark:text-gray-400">
+                  Klik untuk upload cover
+                </span>
+              </>
+            )}
             <input
               type="file"
               accept="image/*"
               onChange={handleFileChange}
               className="hidden"
+              disabled={uploading}
             />
           </label>
         )}
