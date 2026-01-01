@@ -2,17 +2,26 @@
 
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
-import { BookOpen, Users, Clock, ArrowRight, Library, Star, TrendingUp } from 'lucide-react';
+import { useRouter } from 'next/navigation';
+import { BookOpen, Users, Clock, ArrowRight, Library, Star, TrendingUp, Calendar, User as UserIcon } from 'lucide-react';
 import Navbar from '@/components/layout/Navbar';
 import Footer from '@/components/layout/Footer';
 import BookCard from '@/components/features/BookCard';
 import Card from '@/components/ui/Card';
 import Button from '@/components/ui/Button';
 import LoadingSpinner from '@/components/ui/LoadingSpinner';
+import Modal from '@/components/ui/Modal';
+import Badge, { StockBadge } from '@/components/ui/Badge';
+import Image from 'next/image';
+import toast from 'react-hot-toast';
 
 export default function HomePage() {
+  const router = useRouter();
   const [books, setBooks] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [selectedBook, setSelectedBook] = useState(null);
+  const [showModal, setShowModal] = useState(false);
+  const [borrowing, setBorrowing] = useState(false);
 
   useEffect(() => {
     fetchBooks();
@@ -27,6 +36,63 @@ export default function HomePage() {
       console.error('Error fetching books:', error);
     } finally {
       setLoading(false);
+    }
+  };
+
+  const handleViewBook = (book) => {
+    setSelectedBook(book);
+    setShowModal(true);
+  };
+
+  const handleCloseModal = () => {
+    setShowModal(false);
+    setSelectedBook(null);
+  };
+
+  const handleBorrowBook = async (book) => {
+    setBorrowing(true);
+    try {
+      // Check if user is logged in
+      const sessionRes = await fetch('/api/auth/session');
+      if (!sessionRes.ok) {
+        toast.error('Silakan login terlebih dahulu');
+        router.push('/login');
+        return;
+      }
+
+      const { user } = await sessionRes.json();
+
+      if (user.role !== 'member') {
+        toast.error('Hanya member yang dapat meminjam buku');
+        return;
+      }
+
+      // Create loan request
+      const res = await fetch('/api/loans', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ bookId: book.id }),
+      });
+
+      const data = await res.json();
+
+      if (!res.ok) {
+        toast.error(data.error || 'Gagal membuat peminjaman');
+        return;
+      }
+
+      toast.success('Peminjaman berhasil diajukan! Menunggu persetujuan admin.');
+      handleCloseModal();
+
+      // Redirect to member dashboard
+      setTimeout(() => {
+        router.push('/member/dashboard');
+      }, 1500);
+    } catch (error) {
+      console.error('Error borrowing book:', error);
+      toast.error('Terjadi kesalahan');
+    } finally {
+      setBorrowing(false);
     }
   };
 
@@ -112,7 +178,8 @@ export default function HomePage() {
                     key={book.id}
                     book={book}
                     kategori={book.kategori}
-                    showActions={false}
+                    onView={handleViewBook}
+                    showActions={true}
                   />
                 ))}
               </div>
@@ -190,6 +257,134 @@ export default function HomePage() {
           </Link>
         </div>
       </section>
+
+      {/* Book Detail Modal */}
+      {selectedBook && (
+        <Modal
+          isOpen={showModal}
+          onClose={handleCloseModal}
+          title="Detail Buku"
+          size="lg"
+        >
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            {/* Book Cover */}
+            <div className="md:col-span-1">
+              <div className="relative w-full aspect-[2/3] rounded-lg overflow-hidden bg-gray-100 dark:bg-gray-700">
+                {selectedBook.coverUrl ? (
+                  <Image
+                    src={selectedBook.coverUrl}
+                    alt={selectedBook.judul}
+                    fill
+                    className="object-cover"
+                    sizes="(max-width: 768px) 100vw, 33vw"
+                  />
+                ) : (
+                  <div className="w-full h-full flex items-center justify-center">
+                    <BookOpen className="w-16 h-16 text-gray-400" />
+                  </div>
+                )}
+              </div>
+
+              {/* Stock Badge */}
+              <div className="mt-4">
+                <StockBadge
+                  available={selectedBook.stokTersedia}
+                  total={selectedBook.stokTotal}
+                  size="md"
+                />
+              </div>
+            </div>
+
+            {/* Book Info */}
+            <div className="md:col-span-2 space-y-4">
+              {/* Title */}
+              <div>
+                <h2 className="text-2xl font-bold text-gray-900 dark:text-gray-100 mb-2">
+                  {selectedBook.judul}
+                </h2>
+                {selectedBook.kategori && (
+                  <Badge
+                    variant="primary"
+                    size="md"
+                    style={{
+                      backgroundColor: selectedBook.kategori.color + '20',
+                      color: selectedBook.kategori.color
+                    }}
+                  >
+                    {selectedBook.kategori.namaKategori}
+                  </Badge>
+                )}
+              </div>
+
+              {/* Author */}
+              <div className="flex items-center gap-2 text-gray-700 dark:text-gray-300">
+                <UserIcon className="w-5 h-5" />
+                <div>
+                  <p className="text-sm text-gray-500 dark:text-gray-400">Pengarang:</p>
+                  <p className="font-medium">{selectedBook.pengarang}</p>
+                </div>
+              </div>
+
+              {/* Publisher */}
+              <div className="flex items-center gap-2 text-gray-700 dark:text-gray-300">
+                <BookOpen className="w-5 h-5" />
+                <div>
+                  <p className="text-sm text-gray-500 dark:text-gray-400">Penerbit:</p>
+                  <p className="font-medium">{selectedBook.penerbit}</p>
+                </div>
+              </div>
+
+              {/* Year */}
+              <div className="flex items-center gap-2 text-gray-700 dark:text-gray-300">
+                <Calendar className="w-5 h-5" />
+                <div>
+                  <p className="text-sm text-gray-500 dark:text-gray-400">Tahun Terbit:</p>
+                  <p className="font-medium">{selectedBook.tahunTerbit}</p>
+                </div>
+              </div>
+
+              {/* ISBN */}
+              <div className="text-gray-700 dark:text-gray-300">
+                <p className="text-sm text-gray-500 dark:text-gray-400">ISBN:</p>
+                <p className="font-medium font-mono text-sm">{selectedBook.isbn}</p>
+              </div>
+
+              {/* Synopsis */}
+              {selectedBook.sinopsis && (
+                <div className="pt-4 border-t border-gray-200 dark:border-gray-700">
+                  <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-2">
+                    Sinopsis
+                  </h3>
+                  <p className="text-gray-700 dark:text-gray-300 text-sm leading-relaxed">
+                    {selectedBook.sinopsis}
+                  </p>
+                </div>
+              )}
+
+              {/* Action Buttons */}
+              <div className="pt-4 flex gap-3">
+                <Button
+                  variant="ghost"
+                  onClick={handleCloseModal}
+                  fullWidth
+                >
+                  Tutup
+                </Button>
+                {selectedBook.stokTersedia > 0 && (
+                  <Button
+                    variant="primary"
+                    onClick={() => handleBorrowBook(selectedBook)}
+                    loading={borrowing}
+                    fullWidth
+                  >
+                    Pinjam Buku
+                  </Button>
+                )}
+              </div>
+            </div>
+          </div>
+        </Modal>
+      )}
 
       <Footer />
     </div>

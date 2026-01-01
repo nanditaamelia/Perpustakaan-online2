@@ -12,7 +12,11 @@ import { StockBadge } from '../ui/Badge';
  */
 export default function BookCard({ book, kategori, onView, onBorrow, showActions = true }) {
   return (
-    <Card hover className="h-full flex flex-col">
+    <Card
+      hover
+      className="h-full flex flex-col cursor-pointer"
+      onClick={() => onView?.(book)}
+    >
       {/* Book Cover */}
       <div className="relative w-full h-48 mb-4 rounded-lg overflow-hidden bg-gray-100 dark:bg-gray-700">
         {book.coverUrl ? (
@@ -81,7 +85,10 @@ export default function BookCard({ book, kategori, onView, onBorrow, showActions
             variant="outline"
             size="sm"
             fullWidth
-            onClick={() => onView?.(book)}
+            onClick={(e) => {
+              e.stopPropagation();
+              onView?.(book);
+            }}
           >
             Detail
           </Button>
@@ -90,7 +97,10 @@ export default function BookCard({ book, kategori, onView, onBorrow, showActions
               variant="primary"
               size="sm"
               fullWidth
-              onClick={() => onBorrow(book)}
+              onClick={(e) => {
+                e.stopPropagation();
+                onBorrow(book);
+              }}
             >
               Pinjam
             </Button>
