@@ -1,0 +1,40 @@
+# Vercel Ignore - files not needed for deployment
+
+# Tests
+__tests__
+*.test.js
+*.test.jsx
+*.spec.js
+*.spec.jsx
+jest.config.js
+jest.setup.js
+
+# Coverage
+coverage
+
+# Documentation (deployment guides - not needed in runtime)
+DEPLOYMENT.md
+QUICK-DEPLOY.md
+
+# Logs
+logs
+*.log
+
+# Environment (use Vercel env vars)
+.env
+.env.local
+.env*.local
+
+# Development
+.vscode
+.idea
+*.swp
+*.swo
+
+# Git
+.git
+.gitignore
+.gitattributes
+
+# README (optional, include if you want)
+# README.md

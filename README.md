@@ -264,11 +264,32 @@ perpustakaan-online/
 
 ## 🚀 Deployment
 
-### Deploy to Vercel
+### 📖 Deployment Guides
 
-1. Push code ke GitHub
-2. Import project di Vercel
-3. Deploy (zero config needed!)
+**🚀 [Quick Deploy (5 Minutes) →](./QUICK-DEPLOY.md)**
+- Super quick setup guide
+- Deploy to Vercel in 5 minutes
+- Add custom domain from Freenom
+
+**📚 [Complete Deployment Guide →](./DEPLOYMENT.md)**
+- Step-by-step detailed guide
+- Troubleshooting & best practices
+- Monitoring & maintenance
+- Production configurations
+
+### Quick Deploy to Vercel
+
+1. **Push code ke GitHub**
+2. **Import ke Vercel**: [vercel.com/new](https://vercel.com/new)
+3. **Add environment variables** (see below)
+4. **Deploy!**
+
+**Custom Domain (Freenom):**
+- Get free domain: [freenom.com](https://freenom.com) (.tk, .ml, .ga, .cf, .gq)
+- Setup DNS/Nameservers to point to Vercel
+- Auto SSL certificate by Vercel
+
+**Total Cost: $0/month** 🎉
 
 ### Environment Variables
 
