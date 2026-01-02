@@ -1,12 +1,12 @@
 import { NextResponse } from 'next/server';
-import { uploadImage, validateImage, isCloudinaryEnabled } from '@/lib/cloudinary';
+import { uploadFile, validateFile, getStorageProvider } from '@/lib/storage';
 import { withErrorHandling, ValidationError, ApiError } from '@/lib/errorHandler';
 import { rateLimitMiddleware } from '@/lib/rateLimit';
 import { logInfo } from '@/lib/logger';
 
 /**
  * POST /api/upload
- * Upload file to Cloudinary or local storage
+ * Upload file to best available storage (Vercel Blob > Cloudinary > Local)
  * Supports rate limiting, validation, and error handling
  */
 async function handler(request) {
@@ -19,7 +19,7 @@ async function handler(request) {
   }
 
   const maxSize = parseInt(process.env.MAX_FILE_SIZE || '5242880', 10);
-  const validation = validateImage(
+  const validation = validateFile(
     {
       type: file.type,
       size: file.size,
@@ -35,16 +35,15 @@ async function handler(request) {
   const buffer = Buffer.from(bytes);
 
   const originalName = file.name.replace(/[^a-zA-Z0-9.-]/g, '_');
-  const filename = `${Date.now()}-${originalName}`;
 
   try {
-    const result = await uploadImage(buffer, filename, type);
+    const result = await uploadFile(buffer, originalName, type);
 
     logInfo('File uploaded successfully', {
-      filename,
+      filename: originalName,
       type,
       size: file.size,
-      cloudinary: isCloudinaryEnabled(),
+      provider: result.provider,
     });
 
     return NextResponse.json({
@@ -52,8 +51,8 @@ async function handler(request) {
       message: 'File uploaded successfully',
       url: result.url,
       publicId: result.publicId,
-      format: result.format,
-      cloudinary: isCloudinaryEnabled(),
+      provider: result.provider,
+      size: result.size,
     });
   } catch (error) {
     throw new ApiError('Failed to upload file', 500, error.message);

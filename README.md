@@ -55,7 +55,7 @@ Aplikasi web modern untuk manajemen perpustakaan dengan fitur peminjaman buku, m
 - **Password Hashing**: bcryptjs
 
 ### Production Features
-- **Cloud Storage**: Cloudinary (with local fallback)
+- **Cloud Storage**: Vercel Blob Storage (recommended) / Cloudinary / Local fallback
 - **Logging**: Winston (file-based logging)
 - **Rate Limiting**: Custom in-memory rate limiter
 - **Security**: Crypto-js, environment variables
@@ -80,8 +80,9 @@ npm install
 3. **Environment setup:**
 The `.env` file is already created with secure defaults. You can use it as-is for development.
 
-For **Cloudinary** (optional):
-- Sign up at [cloudinary.com](https://cloudinary.com)
+For **Cloud Storage** (optional for dev, required for Vercel):
+- **Vercel Blob** (recommended): Auto-setup when you create Blob store in Vercel → See [VERCEL-STORAGE.md](./VERCEL-STORAGE.md)
+- **Cloudinary** (alternative): Sign up at [cloudinary.com](https://cloudinary.com)
 - Get your credentials from the dashboard
 - Update these values in `.env`:
   ```env

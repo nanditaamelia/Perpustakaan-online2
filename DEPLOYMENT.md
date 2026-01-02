@@ -242,9 +242,45 @@ Update `NEXT_PUBLIC_API_URL` di Vercel:
 
 ---
 
-## Part 3: Setup Cloudinary (Optional)
+## Part 3: Setup File Storage
 
-Jika ingin file uploads ke cloud storage:
+**PENTING:** Vercel filesystem is READ-ONLY. File uploads perlu cloud storage!
+
+### Option A: Vercel Blob Storage (Recommended ⭐)
+
+**Kenapa Vercel Blob?**
+- ✅ **Native** Vercel integration
+- ✅ **Gratis** 500 GB transfer/month
+- ✅ **Zero config** - auto-setup
+- ✅ **Built-in CDN** - fast worldwide
+- ✅ **Official** - by Vercel
+
+**📚 Complete Guide:** [VERCEL-STORAGE.md](./VERCEL-STORAGE.md)
+
+**Quick Setup (3 Steps):**
+
+1. **Create Blob Store:**
+   - Vercel Dashboard → Storage → Create
+   - Pilih **Blob**
+   - Name: `perpustakaan-blob`
+   - Region: Singapore (SIN1)
+   - Click **Create**
+
+2. **Auto-Connected:**
+   - Environment variable `BLOB_READ_WRITE_TOKEN` otomatis ditambahkan
+   - Verify di Settings → Environment Variables
+
+3. **Redeploy:**
+   - Deployments → Redeploy
+   - Done! File uploads sekarang ke Blob Storage 🎉
+
+**Test Upload:**
+- Login as admin → Books → Upload cover
+- Image URL should start with: `https://xxxxx.public.blob.vercel-storage.com`
+
+---
+
+### Option B: Cloudinary (Alternative)
 
 ### Step 1: Daftar Cloudinary
 
