@@ -1,0 +1,37 @@
+[
+  {
+    "id": "1",
+    "namaKategori": "Fiksi",
+    "deskripsi": "Novel, cerita pendek, dan karya sastra fiksi",
+    "color": "#3b82f6",
+    "createdAt": "2025-01-01T00:00:00.000Z"
+  },
+  {
+    "id": "2",
+    "namaKategori": "Non-Fiksi",
+    "deskripsi": "Biografi, self-help, dan buku berdasarkan fakta",
+    "color": "#10b981",
+    "createdAt": "2025-01-01T00:00:00.000Z"
+  },
+  {
+    "id": "3",
+    "namaKategori": "Teknologi",
+    "deskripsi": "Pemrograman, IT, dan perkembangan teknologi",
+    "color": "#8b5cf6",
+    "createdAt": "2025-01-01T00:00:00.000Z"
+  },
+  {
+    "id": "4",
+    "namaKategori": "Sejarah",
+    "deskripsi": "Buku sejarah dan peristiwa masa lalu",
+    "color": "#f59e0b",
+    "createdAt": "2025-01-01T00:00:00.000Z"
+  },
+  {
+    "id": "5",
+    "namaKategori": "Sains",
+    "deskripsi": "Ilmu pengetahuan dan penelitian",
+    "color": "#06b6d4",
+    "createdAt": "2025-01-01T00:00:00.000Z"
+  }
+]
